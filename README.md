@@ -26,7 +26,10 @@ python src/train.py \
     --batch_size 64 \
     --device cuda \
     --output_dir ./results/UK_SG
-```
+
+### Dataset
+
+We provide the dataset used in this project here: **[UK_SG / UK_SG_LabelFree](DATASET_LINK)**.
 
 ## 2. Search for Joinable Columns
 
