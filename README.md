@@ -50,7 +50,7 @@ The search module outputs evaluation metrics including Precision@K, Recall@K.
 
 ## Dataset
 
-We provide the dataset used in this project here: **[UK_SG / UK_SG_LabelFree](DATASET_LINK)**.
+We provide the dataset used in this project here: **[UK_SG](https://drive.google.com/drive/folders/1Ttb6nrt05J6VG2FdF6_jEKoU-zWpSyL2?usp=sharing)**.
 
 ## Key Components
 
