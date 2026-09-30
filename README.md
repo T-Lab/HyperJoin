@@ -11,9 +11,31 @@ This repository provides the codebase for the paper "HyperJoin: LLM-augmented Hy
 
 This repository contains the main source code used for the HyperJoin paper: column-level hypergraph construction, the HIN model, label-free self-supervised training, MST reranking, and evaluation. It is provided as a research artifact; dataset preprocessing and full end-to-end reproduction require the benchmark files described below.
 
+## Quick Demo
+
+A self-contained smoke test ships in `test/`. It runs the full chain — data generation, training, MST-reranked search, evaluation — on five tiny sample tables:
+
+```bash
+python test/run_demo.py
+```
+
+See `test/README.md` for what each file does and how to plug in your own tables or enable LLM perturbation.
+
+## Dataset
+
+We provide the dataset used in this project here: **[UK_SG](https://drive.google.com/drive/folders/1Ttb6nrt05J6VG2FdF6_jEKoU-zWpSyL2?usp=sharing)**.
+
+The scripts expect the downloaded dataset under `datasets/Lake/<dataset>/`, including `target.npy`, `query.npy`, `target_metadata.pkl`, `query_metadata.pkl`, and either `self_supervised_pairs.pkl` or the corresponding joinable-pair CSV/index files. Pass `--data_root` to `train.py`/`search.py` or set `HYPERJOIN_DATA_ROOT` to use a different location.
+
 ## 1. Generate Label-Free Training Pairs (Optional)
 
 `src/datagen.py` builds self-supervised joinable pairs by table splitting and column perturbation; `src/llm_augmentation.py` generates the LLM-augmented inter-table descriptions used for hyperedge construction. Skip this step if `self_supervised_pairs.pkl` already exists under `datasets/Lake/<dataset>/`.
+
+```bash
+python src/datagen.py --datasets <name> --data_dir <raw_tables_dir> --use_llm 0
+```
+
+Rule-based perturbation is used by default. Pass `--use_llm 1` and set `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL_ID` to enable LLM perturbation (see `src/llm_augmentation.py`).
 
 ## 2. Train the Model
 
@@ -44,7 +66,7 @@ After training, run the search pipeline to discover joinable columns:
 ```bash
 python src/hypergraph/search.py \
     --dataset UK_SG \
-    --model_path ./results/UK_SG/best_model.pth \
+    --model_path ./results/UK_SG/UK_SG_LabelFree/best_model.pth \
     --use_mst \
     --mst_alpha 0.0 \
     --mst_lambda 1.0 \
@@ -55,13 +77,7 @@ python src/hypergraph/search.py \
     --seed 42
 ```
 
-The search module outputs evaluation metrics including Precision@K, Recall@K.
-
-## Dataset
-
-We provide the dataset used in this project here: **[UK_SG](https://drive.google.com/drive/folders/1Ttb6nrt05J6VG2FdF6_jEKoU-zWpSyL2?usp=sharing)**.
-
-The scripts expect the downloaded dataset under `datasets/Lake/<dataset>/`, including `target.npy`, `query.npy`, `target_metadata.pkl`, `query_metadata.pkl`, and either `self_supervised_pairs.pkl` or the corresponding joinable-pair CSV/index files. Pass `--data_root` to `train.py`/`search.py` or set `HYPERJOIN_DATA_ROOT` to use a different location.
+The search module outputs evaluation metrics including Precision@K, Recall@K, and F1@K, plus per-query logs under `results/`.
 
 ## Key Components
 
