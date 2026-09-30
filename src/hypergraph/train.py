@@ -607,9 +607,9 @@ def main():
                         help='Root directory containing <dataset>/ folders (default: datasets/Lake)')
     parser.add_argument('--debug', action='store_true',
                         help='Print per-batch hypergraph diagnostics')
-    parser.add_argument('--epochs', type=int, default=20)
+    parser.add_argument('--epochs', type=int, default=30)
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--lr', type=float, default=4e-4)
     parser.add_argument('--temperature', type=float, default=0.1)
     parser.add_argument('--num_layers', type=int, default=1,
                         help='Number of BiHMP layers (best: 1; avoids over-smoothing on sparse hypergraphs)')
@@ -625,7 +625,7 @@ def main():
                         help='Fraction of hard negatives [0,1]')
     parser.add_argument('--hard_topk', type=int, default=5,
                         help='Sample uniformly from the top-k most similar negatives')
-    parser.add_argument('--margin', type=float, default=0.5,
+    parser.add_argument('--margin', type=float, default=1.0,
                         help='Triplet-loss margin')
 
     # Ablation: whether to use the hypergraph
