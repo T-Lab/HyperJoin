@@ -60,7 +60,7 @@ The search module outputs evaluation metrics including Precision@K, Recall@K.
 
 We provide the dataset used in this project here: **[UK_SG](https://drive.google.com/drive/folders/1Ttb6nrt05J6VG2FdF6_jEKoU-zWpSyL2?usp=sharing)**.
 
-The scripts expect the downloaded dataset under `datasets/Lake/<dataset>/`, including `target.npy`, `query.npy`, `target_metadata.pkl`, `query_metadata.pkl`, and either `self_supervised_pairs.pkl` or the corresponding joinable-pair CSV/index files.
+The scripts expect the downloaded dataset under `datasets/Lake/<dataset>/`, including `target.npy`, `query.npy`, `target_metadata.pkl`, `query_metadata.pkl`, and either `self_supervised_pairs.pkl` or the corresponding joinable-pair CSV/index files. Pass `--data_root` to `train.py`/`search.py` or set `HYPERJOIN_DATA_ROOT` to use a different location.
 
 ## Key Components
 
@@ -108,6 +108,7 @@ HyperJoin/
 │   ├── data.py                                # Dataset classes
 │   ├── evaluator.py                           # Precision/Recall/F1 evaluation
 │   └── utils.py                               # Utility functions
+├── test/                                      # Self-contained demo (see test/README.md)
 ├── full_version/                              # Online full paper with appendix
 └── datasets/Lake/                             # Expected dataset root (not included)
 ```

@@ -602,6 +602,8 @@ def main():
     parser = argparse.ArgumentParser(description='Column-Level Hypergraph Training')
 
     parser.add_argument('--dataset', type=str, required=True)
+    parser.add_argument('--data_root', type=str, default='datasets/Lake',
+                        help='Root directory containing <dataset>/ folders (default: datasets/Lake)')
     parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--lr', type=float, default=0.0001)
@@ -712,7 +714,7 @@ def main():
     set_seed(args.seed)
 
     # Data paths
-    data_dir = f'datasets/Lake/{args.dataset}'
+    data_dir = f'{args.data_root}/{args.dataset}'
     metadata_path = f'{data_dir}/target_metadata.pkl'
     target_npy_path = f'{data_dir}/target.npy'
 

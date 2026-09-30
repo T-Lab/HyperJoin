@@ -109,6 +109,8 @@ def main():
     # Original parameters
     parser.add_argument('--dataset', type=str, required=True,
                         help='Dataset name (e.g., CAN_ALL)')
+    parser.add_argument('--data_root', type=str, default='datasets/Lake',
+                        help='Root directory containing <dataset>/ folders (default: datasets/Lake)')
     parser.add_argument('--model_path', type=str, required=True,
                         help='Path to trained model checkpoint')
     parser.add_argument('--joinable_pairs', type=str, required=False, default=None,
@@ -142,6 +144,9 @@ def main():
 
     args = parser.parse_args()
 
+    # Evaluators resolve the dataset root via this env var as well
+    os.environ['HYPERJOIN_DATA_ROOT'] = args.data_root
+
     # Set random seed
     set_seed(args.seed)
 
@@ -173,7 +178,7 @@ def main():
     print(f"{'='*60}\n")
 
     # Data paths
-    data_dir = f"datasets/Lake/{args.dataset}"
+    data_dir = f"{args.data_root}/{args.dataset}"
     target_path = f"{data_dir}/target.npy"
     query_path = f"{data_dir}/query.npy"
     target_metadata_path = f"{data_dir}/target_metadata.pkl"
@@ -297,7 +302,7 @@ def main():
             print('\n Building GT adjacency matrix for MST...')
             cache_path = None
             if args.mst_cache_graph:
-                cache_dir = f"datasets/Lake/{args.dataset}/cache"
+                cache_dir = f"{args.data_root}/{args.dataset}/cache"
                 os.makedirs(cache_dir, exist_ok=True)
                 cache_path = f"{cache_dir}/gt_adjacency.npy"
 

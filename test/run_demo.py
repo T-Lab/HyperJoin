@@ -51,7 +51,8 @@ USE_LLM = False   # set True to enable LLM perturbation (requires the LLM_* env 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEST_DIR = REPO_ROOT / 'test'
 SRC_DIR = REPO_ROOT / 'src'
-DEMO_DIR = REPO_ROOT / 'datasets' / 'Lake' / 'DEMO'
+DATA_DIR = TEST_DIR / 'data'        # all generated datasets live here (git-ignored)
+DEMO_DIR = DATA_DIR / 'DEMO'
 RESULT_DIR = REPO_ROOT / 'results' / 'demo'
 
 sys.path.insert(0, str(SRC_DIR))
@@ -87,7 +88,7 @@ def write_metadata_pkl(json_path: Path, pkl_path: Path):
 def prepare_eval_dataset():
     """Step 1: build datasets/Lake/DEMO from the test/ files."""
     print('\n' + '=' * 78)
-    print('Step 1/4  Preparing the evaluation dataset (datasets/Lake/DEMO)')
+    print('Step 1/4  Preparing the evaluation dataset (test/data/DEMO)')
     print('=' * 78)
 
     gt_dir = DEMO_DIR / 't=0.2' / 'test'
@@ -104,13 +105,13 @@ def prepare_eval_dataset():
     # vectors either way, so the demo works offline).
     text2vec(str(DEMO_DIR / 'query.csv'), str(DEMO_DIR / 'query.npy'), plm='fasttext')
     text2vec(str(DEMO_DIR / 'target.csv'), str(DEMO_DIR / 'target.npy'), plm='fasttext')
-    print('  datasets/Lake/DEMO is ready')
+    print('  test/data/DEMO is ready')
 
 
 def generate_training_data():
     """Step 2: label-free pair generation from the raw tables in test/tables/."""
     print('\n' + '=' * 78)
-    print('Step 2/4  Generating label-free training pairs (datasets/Lake/DEMO_LabelFree)')
+    print('Step 2/4  Generating label-free training pairs (test/data/DEMO_LabelFree)')
     if not USE_LLM:
         print('  LLM perturbation disabled -> rule-based perturbation is used.')
         print('  Set USE_LLM = True in test/run_demo.py and export LLM_API_KEY to enable it.')
@@ -119,6 +120,7 @@ def generate_training_data():
         sys.executable, 'src/datagen.py',
         '--datasets', 'DEMO',
         '--data_dir', str(TEST_DIR / 'tables'),
+        '--output_dir', str(DATA_DIR / 'DEMO'),
         '--use_llm', '1' if USE_LLM else '0',
         '--type', 'mat',
     ])
@@ -132,6 +134,7 @@ def train_model():
     run([
         sys.executable, 'src/hypergraph/train.py',
         '--dataset', 'DEMO_LabelFree',
+        '--data_root', str(DATA_DIR.relative_to(REPO_ROOT)),
         '--epochs', '3',
         '--batch_size', '16',
         '--num_workers', '0',
@@ -150,6 +153,7 @@ def search():
     run([
         sys.executable, 'src/hypergraph/search.py',
         '--dataset', 'DEMO',
+        '--data_root', str(DATA_DIR.relative_to(REPO_ROOT)),
         '--model_path', str(ckpt),
         '--use_mst',
         '--mst_alpha', '0.0',
@@ -166,8 +170,8 @@ def main():
     print('=' * 78)
     print(' HyperJoin demo pipeline')
     print('   raw tables   : test/tables/*.csv   (what readers prepare for real data)')
-    print('   eval dataset : datasets/Lake/DEMO  (query/target/index built from test/)')
-    print('   train dataset: datasets/Lake/DEMO_LabelFree (generated)')
+    print('   eval dataset : test/data/DEMO  (query/target/index built from test/)')
+    print('   train dataset: test/data/DEMO_LabelFree (generated)')
     print('=' * 78)
 
     prepare_eval_dataset()

@@ -1082,6 +1082,8 @@ def parse_ops(parser):
                        help='number of augmented samples per anchor')
     parser.add_argument('--type', type=str, default='mat',
                        help='PLM type to use')
+    parser.add_argument('--output_dir', type=str, default=None,
+                       help='output directory (default: datasets/Lake/<datasets>)')
     parser.add_argument('--num_query', type=int, default=30,
                        help='number of query columns (kept for compatibility)')
     parser.add_argument('--use_llm', type=int, default=None, choices=[0, 1],
@@ -1340,7 +1342,9 @@ if __name__ == "__main__":
     if args.data_dir is None:
         args.data_dir = f"datasets/datasets_{args.datasets}"
 
-    output_dir = f"datasets/Lake/{args.datasets}"
+    if args.output_dir is None:
+        args.output_dir = f"datasets/Lake/{args.datasets}"
+    output_dir = args.output_dir
 
     print("\n" + "="*80)
     print("HyperJoin Label-Free Data Generator")

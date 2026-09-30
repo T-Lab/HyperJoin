@@ -12,6 +12,7 @@ venv/
 
 # Experiment artifacts
 datasets/
+test/data/
 results/
 logs/
 cache/

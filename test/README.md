@@ -9,7 +9,7 @@ python test/run_demo.py
 
 It executes the full chain — label-free data generation, model training
 (3 epochs on CPU), and search with MST reranking — then prints
-Precision/Recall/F1@K. Results land in `results/` and `datasets/Lake/DEMO*/`
+Precision/Recall/F1@K. Results land in `results/` and `test/data/DEMO*/`
 (both git-ignored).
 
 ## What this folder contains
@@ -25,7 +25,7 @@ dataset:
 | `index.csv` | Ground truth — row *i* lists the target-column indices that are correct answers for query *i*. |
 | `query_metadata.json` | Display names (`table_name`, `column_name`) for each query row. |
 | `target_metadata.json` | Same, for the target pool. |
-| `run_demo.py` | Converts the above into `datasets/Lake/DEMO`, runs `datagen.py`, `train.py`, `search.py`. |
+| `run_demo.py` | Converts the above into `test/data/DEMO`, runs `datagen.py`, `train.py`, `search.py`. |
 
 In the demo ground truth, query 0 (person names) is joinable to target columns
 0 and 1; queries 1–4 (cities / emails / products / customer ids) each map to

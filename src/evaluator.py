@@ -23,8 +23,10 @@ import pickle
 class DetailedEvaluator:
     """Detailed evaluator - full search-result analysis."""
 
-    def __init__(self, datasets):
+    def __init__(self, datasets, data_root=None):
         self.datasets = datasets
+        # Dataset root: constructor arg > HYPERJOIN_DATA_ROOT env var > default
+        self.data_root = data_root or os.environ.get('HYPERJOIN_DATA_ROOT', 'datasets/Lake')
         self.query_real_data = []
         self.target_real_data = []
         self.query_names = None  # display names from the metadata
@@ -52,7 +54,7 @@ class DetailedEvaluator:
                 return rows
 
             # Load the real query data
-            query_csv_path = f'datasets/Lake/{self.datasets}/query.csv'
+            query_csv_path = f'{self.data_root}/{self.datasets}/query.csv'
             print(f" Loading query data: {query_csv_path}")
             if os.path.exists(query_csv_path):
                 self.query_real_data = read_csv_columns(query_csv_path)
@@ -61,7 +63,7 @@ class DetailedEvaluator:
                 print(f"Query data file not found: {query_csv_path}")
 
             # Load the real target data
-            target_csv_path = f'datasets/Lake/{self.datasets}/target.csv'
+            target_csv_path = f'{self.data_root}/{self.datasets}/target.csv'
             print(f" Loading target data: {target_csv_path}")
             if os.path.exists(target_csv_path):
                 self.target_real_data = read_csv_columns(target_csv_path)
@@ -71,8 +73,8 @@ class DetailedEvaluator:
 
             # Consistency check against the NPY column counts
             try:
-                target_npy_path = f'datasets/Lake/{self.datasets}/target.npy'
-                query_npy_path = f'datasets/Lake/{self.datasets}/query.npy'
+                target_npy_path = f'{self.data_root}/{self.datasets}/target.npy'
+                query_npy_path = f'{self.data_root}/{self.datasets}/query.npy'
                 if os.path.exists(target_npy_path):
                     target_npy_len = len(np.load(target_npy_path, allow_pickle=True))
                     if target_npy_len != len(self.target_real_data):
@@ -120,7 +122,7 @@ class DetailedEvaluator:
                         names_local.append('')
                 return names_local
 
-            base = f'datasets/Lake/{self.datasets}'
+            base = f'{self.data_root}/{self.datasets}'
             # Target metadata
             target_meta_pkl = os.path.join(base, 'target_metadata.pkl')
             if os.path.exists(target_meta_pkl):
@@ -161,7 +163,7 @@ class DetailedEvaluator:
                 return names[index]
 
             # Fall back to the metadata text files
-            metadata_file = f'datasets/Lake/{self.datasets}/{"query" if is_query else "target"}_metadata.txt'
+            metadata_file = f'{self.data_root}/{self.datasets}/{"query" if is_query else "target"}_metadata.txt'
 
             if os.path.exists(metadata_file):
                 with open(metadata_file, 'r') as f:
@@ -226,7 +228,7 @@ class DetailedEvaluator:
         """Load the ground truth - compatible with Snoopy's index.csv format."""
         print(f" Loading ground truth...")
 
-        index_path = f"datasets/Lake/{self.datasets}/t=0.2/test/index.csv"
+        index_path = f"{self.data_root}/{self.datasets}/t=0.2/test/index.csv"
 
         if not os.path.exists(index_path):
             raise FileNotFoundError(f"Ground-truth file does not exist: {index_path}")
