@@ -10,7 +10,7 @@ tqdm>=4.65
 # Configure via the LLM_BASE_URL / LLM_API_KEY / LLM_MODEL_ID environment variables.
 openai>=1.0.0
 
-# Optional: real FastText embeddings for data generation (src/DataGen.py).
-# Without it, DataGen falls back to deterministic random embeddings.
+# Optional: real FastText embeddings for data generation (src/datagen.py).
+# Without it, datagen falls back to deterministic random embeddings.
 # On some platforms use `fasttext-wheel` instead.
 fasttext>=0.9.2

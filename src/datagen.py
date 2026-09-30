@@ -746,7 +746,7 @@ class LabelFreeDataGenerator:
                         if col2 == perturbed_col_name:
                             continue
 
-                        # Bug fix: exclude pairs of the same column
+                        # Exclude pairs of the same column
                         if col1 == col2:
                             continue
 

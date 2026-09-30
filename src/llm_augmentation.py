@@ -278,7 +278,7 @@ Return JSON only, no explanations."""
                            indices: List[int]) -> pd.DataFrame:
         """
         Basic string-based perturbation (fallback method).
-        Same as original implementation in datagen.py
+        Mirrors the rule-based perturbation in datagen.py
         """
         for idx in indices:
             original = str(df[key_col].iloc[idx])
