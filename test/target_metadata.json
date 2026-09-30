@@ -1,0 +1,19 @@
+{
+  "metadata": [
+    {"index": 0,  "table_name": "customers.csv",  "column_name": "cust_name"},
+    {"index": 1,  "table_name": "clients.csv",    "column_name": "contact_name"},
+    {"index": 2,  "table_name": "customers.csv",  "column_name": "city"},
+    {"index": 3,  "table_name": "customers.csv",  "column_name": "email"},
+    {"index": 4,  "table_name": "orders.csv",     "column_name": "product"},
+    {"index": 5,  "table_name": "customers.csv",  "column_name": "customer_id"},
+    {"index": 6,  "table_name": "orders.csv",     "column_name": "amount"},
+    {"index": 7,  "table_name": "clients.csv",    "column_name": "country"},
+    {"index": 8,  "table_name": "ledger.csv",     "column_name": "invoice_date"},
+    {"index": 9,  "table_name": "directory.csv",  "column_name": "phone"},
+    {"index": 10, "table_name": "employees.csv",  "column_name": "department"},
+    {"index": 11, "table_name": "orders.csv",     "column_name": "status"},
+    {"index": 12, "table_name": "reviews.csv",    "column_name": "rating"},
+    {"index": 13, "table_name": "inventory.csv",  "column_name": "sku"},
+    {"index": 14, "table_name": "reviews.csv",    "column_name": "score"}
+  ]
+}

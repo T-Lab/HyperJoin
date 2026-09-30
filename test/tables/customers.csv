@@ -1,0 +1,13 @@
+customer_id,cust_name,email,city
+C1001,Alice Johnson,alice.j@gmail.com,New York
+C1002,Bob Smith,bob.smith@outlook.com,Los Angeles
+C1003,Carol White,carol@company.org,Chicago
+C1004,David Lee,dlee@mail.com,Houston
+C1005,Emma Davis,emma.davis@webmail.net,Phoenix
+C1006,Frank Miller,frank.m@corp.com,Seattle
+C1007,Grace Chen,grace.chen@service.io,Denver
+C1008,Henry Wilson,hwilson@provider.com,Boston
+C1009,Ivy Zhang,ivy.z@mailbox.org,Austin
+C1010,Jack Brown,jack.b@enterprise.net,Portland
+C1011,Karen Adams,kadams@mail.org,Miami
+C1012,Leo Clark,leo.c@isp.net,Atlanta

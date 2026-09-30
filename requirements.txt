@@ -1,0 +1,16 @@
+# Core dependencies (required for training / search / evaluation)
+torch>=2.0
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+tqdm>=4.65
+
+# Optional: LLM-based augmentation (src/llm_augmentation.py).
+# Only needed when datagen.py is run with LLM perturbation enabled.
+# Configure via the LLM_BASE_URL / LLM_API_KEY / LLM_MODEL_ID environment variables.
+openai>=1.0.0
+
+# Optional: real FastText embeddings for data generation (src/DataGen.py).
+# Without it, DataGen falls back to deterministic random embeddings.
+# On some platforms use `fasttext-wheel` instead.
+fasttext>=0.9.2

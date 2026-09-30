@@ -1,0 +1,13 @@
+supplier_id,company,contact_email,country
+SUP-01,TechParts Inc,sales@techparts.com,USA
+SUP-02,GlobalGoods Ltd,info@globalgoods.co.uk,UK
+SUP-03,FastShip Co,orders@fastship.com,USA
+SUP-04,QualityFirst GmbH,kontakt@qualityfirst.de,Germany
+SUP-05,BudgetWare,support@budgetware.com,USA
+SUP-06,PrimeSource,hello@primesource.ca,Canada
+SUP-07,DataLink Systems,contact@datalink.jp,Japan
+SUP-08,MetroSupply,service@metrosupply.fr,France
+SUP-09,OceanicTrade,mail@oceanictrade.au,Australia
+SUP-10,NordicGoods,info@nordicgoods.se,Sweden
+SUP-11,AlphaDistribution,sales@alphadist.com,USA
+SUP-12,PacificParts,orders@pacificparts.nz,New Zealand

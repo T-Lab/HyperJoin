@@ -1,0 +1,13 @@
+order_id,customer_ref,product,amount
+ORD-5001,C1001,Laptop Pro 15,1299.99
+ORD-5002,C1003,Wireless Mouse,24.50
+ORD-5003,C1002,USB-C Cable,12.99
+ORD-5004,C1005,Monitor 27in,349.00
+ORD-5005,C1004,Mechanical Keyboard,89.99
+ORD-5006,C1007,Laptop Pro 15,1299.99
+ORD-5007,C1006,Wireless Mouse,24.50
+ORD-5008,C1010,USB-C Cable,12.99
+ORD-5009,C1008,Monitor 27in,349.00
+ORD-5010,C1012,Mechanical Keyboard,89.99
+ORD-5011,C1009,Laptop Pro 15,1299.99
+ORD-5012,C1011,USB-C Cable,12.99

@@ -1,0 +1,9 @@
+{
+  "metadata": [
+    {"index": 0, "table_name": "q_directory.csv", "column_name": "full_name"},
+    {"index": 1, "table_name": "q_directory.csv", "column_name": "city"},
+    {"index": 2, "table_name": "q_directory.csv", "column_name": "email"},
+    {"index": 3, "table_name": "q_catalog.csv",   "column_name": "product"},
+    {"index": 4, "table_name": "q_directory.csv", "column_name": "customer_id"}
+  ]
+}

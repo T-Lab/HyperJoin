@@ -7,10 +7,18 @@
 
 This repository provides the codebase for the paper "HyperJoin: LLM-augmented Hypergraph Link Prediction for Joinable Table Discovery".
 
-## 1. Train the Model
+## Artifact Status
+
+This repository contains the main source code used for the HyperJoin paper: column-level hypergraph construction, the HIN model, label-free self-supervised training, MST reranking, and evaluation. It is provided as a research artifact; dataset preprocessing and full end-to-end reproduction require the benchmark files described below.
+
+## 1. Generate Label-Free Training Pairs (Optional)
+
+`src/datagen.py` builds self-supervised joinable pairs by table splitting and column perturbation; `src/llm_augmentation.py` generates the LLM-augmented inter-table descriptions used for hyperedge construction. Skip this step if `self_supervised_pairs.pkl` already exists under `datasets/Lake/<dataset>/`.
+
+## 2. Train the Model
 
 ```bash
-python src/train.py \
+python src/hypergraph/train.py \
     --dataset UK_SG_LabelFree \
     --loss_type triplet \
     --lr 4e-4 \
@@ -28,12 +36,12 @@ python src/train.py \
     --output_dir ./results/UK_SG
 ```
 
-## 2. Search for Joinable Columns
+## 3. Search for Joinable Columns
 
 After training, run the search pipeline to discover joinable columns:
 
 ```bash
-python src/search.py \
+python src/hypergraph/search.py \
     --dataset UK_SG \
     --model_path ./results/UK_SG/best_model.pth \
     --use_mst \
@@ -51,6 +59,8 @@ The search module outputs evaluation metrics including Precision@K, Recall@K.
 ## Dataset
 
 We provide the dataset used in this project here: **[UK_SG](https://drive.google.com/drive/folders/1Ttb6nrt05J6VG2FdF6_jEKoU-zWpSyL2?usp=sharing)**.
+
+The scripts expect the downloaded dataset under `datasets/Lake/<dataset>/`, including `target.npy`, `query.npy`, `target_metadata.pkl`, `query_metadata.pkl`, and either `self_supervised_pairs.pkl` or the corresponding joinable-pair CSV/index files.
 
 ## Key Components
 
@@ -80,28 +90,39 @@ We provide the dataset used in this project here: **[UK_SG](https://drive.google
 ```
 HyperJoin/
 ├── src/
-│   ├── train.py           # Model training
-│   ├── search.py          # Joinable column search
-│   ├── model.py           # Hypergraph neural network model
-│   ├── model_base.py      # Base model components
-│   ├── reranker.py        # MST reranking
-│   ├── data.py            # Data loaders
-│   ├── evaluator.py       # Evaluation metrics
-│   └── utils.py           # Utility functions
-└── datasets_*/            # Dataset directories
+│   ├── hypergraph/                            # Core model & pipeline
+│   │   ├── construction.py                    # Hypergraph construction, batching, losses
+│   │   ├── model.py                           # EnhancedHyperJoinModel (HIN)
+│   │   ├── layers.py                          # Positional encoding & mixer layers
+│   │   ├── intra_edge_gnn.py                  # Intra-hyperedge GNN encoder
+│   │   ├── train.py                           # Label-free self-supervised training
+│   │   └── search.py                          # Search + MST reranking
+│   ├── mst_reranker/                          # Coherence-aware reranking
+│   │   ├── mst.py                             # Greedy label-free MST reranker
+│   │   ├── explicit_maxst.py                  # Explicit MaxST variant
+│   │   ├── graph_builder.py                   # Joinability graph builder
+│   │   └── coherence_eval.py                  # Coherence metrics
+│   ├── datagen.py                             # Label-free pair generation
+│   ├── llm_augmentation.py                    # LLM-augmented inter-table hyperedges
+│   ├── perturbation_cache.py                  # Column perturbation cache
+│   ├── data.py                                # Dataset classes
+│   ├── evaluator.py                           # Precision/Recall/F1 evaluation
+│   └── utils.py                               # Utility functions
+├── full_version/                              # Online full paper with appendix
+└── datasets/Lake/                             # Expected dataset root (not included)
 ```
 
 ## Requirements
 
 - Python 3.8+
 - PyTorch 2.0+
-- transformers
-- numpy
-- scikit-learn
-- networkx
+- numpy, pandas, scipy, tqdm
+- `openai` (optional, only for `llm_augmentation.py`)
+- `fasttext` (optional, only for `datagen.py`; falls back to deterministic embeddings without it)
+- `scikit-learn` + `matplotlib` (optional, only for the embedding-visualisation helper)
 
 Install dependencies:
 ```bash
-pip install torch transformers numpy scikit-learn networkx
+pip install -r requirements.txt
 ```
 
