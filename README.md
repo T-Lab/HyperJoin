@@ -29,6 +29,7 @@ python src/hypergraph/train.py \
     --num_layers 1 \
     --use_residual 1 \
     --margin 1.0 \
+    --edge_mask_ratio 0.2 \
     --hard_neg_ratio 1.0 \
     --epochs 30 \
     --batch_size 64 \

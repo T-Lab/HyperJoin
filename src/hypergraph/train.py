@@ -652,9 +652,10 @@ def main():
     # disjoint, so the same edge cannot leak from structure into supervision.
     # 0.0 (default) = legacy behaviour where the full set serves as both.
     # The main PE ablation uses 0.2 (hold out 20% for prediction).
-    parser.add_argument('--edge_mask_ratio', type=float, default=0.0,
+    parser.add_argument('--edge_mask_ratio', type=float, default=0.2,
                         help='Fraction of positive pairs held out as E_pred (loss supervision); '
-                             'the rest becomes E_support (PE / hypergraph). 0.0 = no split (legacy).')
+                             'the rest becomes E_support (PE / hypergraph). 0.2 = paper setting; '
+                             '0.0 = no split (legacy, PE sees the supervised edges).')
     # Data-matched control (Variant F): with edge_mask_ratio>0 the loss still uses
     # pred_pairs (same as E), but PE/hypergraph support is forced to the full set
     # to isolate "PE leakage" from "less supervision data".
