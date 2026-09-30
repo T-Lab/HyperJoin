@@ -144,3 +144,19 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
+## Citation
+
+If you find this work useful, please cite:
+
+```bibtex
+@article{liu2026hyperjoin,
+  author    = {Liu, Shiyuan and Wang, Jianwei and Lin, Xuemin and Qin, Lu and Zhang, Wenjie and Zhang, Ying},
+  title     = {HyperJoin: {LLM}-augmented Hypergraph Link Prediction for Joinable Table Discovery},
+  journal   = {Proceedings of the VLDB Endowment},
+  volume    = {19},
+  number    = {13},
+  year      = {2026},
+  url       = {https://github.com/T-Lab/HyperJoin}
+}
+```
+
