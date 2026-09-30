@@ -65,10 +65,12 @@ class LabelFreeDataGenerator:
     3. Simulate realistic fuzzy-join scenarios
     """
 
-    def __init__(self, data_dir: str, output_dir: str, num_query: int = 30, use_llm: bool = False, use_cache: bool = True):
+    def __init__(self, data_dir: str, output_dir: str, num_query: int = 30, use_llm: bool = False,
+                 use_cache: bool = True, display_samples: int = 5):
         self.data_dir = data_dir
         self.num_query = num_query
         self.use_llm = use_llm and LLM_AVAILABLE
+        self.display_samples = display_samples
 
         # Append the _LabelFree suffix to the output directory
         self.output_dir = output_dir + '_LabelFree'
@@ -124,7 +126,8 @@ class LabelFreeDataGenerator:
         _pair_gen_time = time.time() - _t
 
         # Show sample pairs
-        self.display_sample_pairs(positive_pairs, negative_pairs)
+        if self.display_samples > 0:
+            self.display_sample_pairs(positive_pairs, negative_pairs, self.display_samples)
 
         # Step 3: Convert to the HyperJoin format (target.csv)
         print("\n[Step 3] Converting to HyperJoin data format...")
@@ -1084,6 +1087,8 @@ def parse_ops(parser):
                        help='PLM type to use')
     parser.add_argument('--output_dir', type=str, default=None,
                        help='output directory (default: datasets/Lake/<datasets>)')
+    parser.add_argument('--display_samples', type=int, default=5,
+                        help='sample pairs printed per class for inspection (0 = none)')
     parser.add_argument('--num_query', type=int, default=30,
                        help='number of query columns (kept for compatibility)')
     parser.add_argument('--use_llm', type=int, default=None, choices=[0, 1],
@@ -1360,7 +1365,8 @@ if __name__ == "__main__":
         data_dir=args.data_dir,
         output_dir=output_dir,
         num_query=args.num_query,
-        use_llm=bool(args.use_llm)
+        use_llm=bool(args.use_llm),
+        display_samples=args.display_samples
     )
 
     generator.run_complete_pipeline(

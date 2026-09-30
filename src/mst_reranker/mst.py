@@ -279,7 +279,7 @@ class LabelFreeMSTReranker:
         if self.verbose:
             print(f" MST selection complete: {len(result_global)}/{K} nodes selected")
             if len(result_global) < K:
-                print(f"   ️ Only {len(result_global)} candidates available (< K={K})")
+                print(f"    Only {len(result_global)} candidates available (< K={K})")
             print(f"   MST edges: {len(mst_edges)}")
             print(f"   MST total weight: {mst_total_weight:.4f}")
             if len(mst_edges) > 0:

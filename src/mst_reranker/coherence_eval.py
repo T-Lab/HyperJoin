@@ -77,7 +77,7 @@ class CoherenceEvaluator(DetailedEvaluator):
                 }
         """
         if self.gt_adjacency is None:
-            print("️ GT adjacency matrix not provided, skipping coherence metrics")
+            print(" GT adjacency matrix not provided, skipping coherence metrics")
             return {}
 
         metrics = {}

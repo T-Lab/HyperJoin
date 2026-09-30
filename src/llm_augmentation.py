@@ -28,8 +28,6 @@ try:
     from openai import OpenAI
 except ImportError:
     OpenAI = None
-    print("️ OpenAI package not installed. LLM augmentation will be disabled.")
-    print("   Install with: pip install openai>=1.0.0")
 
 
 # ====== API Configuration ======
@@ -61,6 +59,12 @@ class LLMAugmenter:
         self.client = None
         self.cache = cache  # Perturbation cache
 
+        if enable_llm and OpenAI is None:
+            print("OpenAI package not installed. LLM augmentation disabled.")
+            print("   Install with: pip install openai>=1.0.0")
+        elif enable_llm and not API_KEY:
+            print("LLM_API_KEY not set. LLM augmentation disabled.")
+
         if self.enable_llm:
             try:
                 self.client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
@@ -68,7 +72,7 @@ class LLMAugmenter:
                 if self.cache:
                     print(f" Perturbation cache enabled")
             except Exception as e:
-                print(f"️ Failed to initialize LLM client: {e}")
+                print(f" Failed to initialize LLM client: {e}")
                 print("   Falling back to basic augmentation")
                 self.enable_llm = False
 
@@ -128,7 +132,7 @@ class LLMAugmenter:
             return df_copy
 
         except Exception as e:
-            print(f"️ LLM perturbation failed: {e}")
+            print(f" LLM perturbation failed: {e}")
             if self.fallback_to_basic:
                 print("   Falling back to basic perturbation")
                 return self._basic_perturbation(df_copy, key_col, perturb_indices)
@@ -224,14 +228,14 @@ Return JSON only, no explanations."""
                 if "429" in error_str or "rate limit" in error_str.lower():
                     if attempt < max_retries - 1:
                         retry_delay = base_delay * (2 ** attempt) + random.uniform(2, 5)
-                        print(f"️ Rate limit (attempt {attempt+1}/{max_retries}), waiting {retry_delay:.1f}s...")
+                        print(f" Rate limit (attempt {attempt+1}/{max_retries}), waiting {retry_delay:.1f}s...")
                         time.sleep(retry_delay)
                         continue
                     else:
-                        print(f"️ Rate limit after {max_retries} attempts, using basic perturbation")
+                        print(f" Rate limit after {max_retries} attempts, using basic perturbation")
                 else:
                     # Non-rate-limit error, don't retry
-                    print(f"️ LLM API call failed: {e}")
+                    print(f" LLM API call failed: {e}")
                     break
 
         # All retries failed, return original values
@@ -508,11 +512,11 @@ Return JSON only."""
                 if "429" in error_str or "rate limit" in error_str.lower():
                     if attempt < max_retries - 1:
                         retry_delay = 2.0 * (2 ** attempt) + random.uniform(2, 5)
-                        print(f"    ️ Rate limit, waiting {retry_delay:.1f}s...")
+                        print(f"     Rate limit, waiting {retry_delay:.1f}s...")
                         time.sleep(retry_delay)
                         continue
                 else:
-                    print(f"    ️ Batch LLM failed: {e}")
+                    print(f"     Batch LLM failed: {e}")
                     break
 
         # All attempts failed; use the basic method

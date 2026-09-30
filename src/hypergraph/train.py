@@ -314,7 +314,7 @@ class ColumnHypergraphDataset(Dataset):
 def train_epoch(model, train_loader, criterion, optimizer, device,
                 global_hypergraph=None, num_type1_edges=None, global_column_pe=None,
                 hard_negatives=True, hard_neg_ratio=1.0, hard_topk=5, margin=0.5, loss_type='triplet',
-                infonce_temperature=0.1):
+                infonce_temperature=0.1, debug=False):
     """Train for one epoch.
 
     Args:
@@ -324,6 +324,7 @@ def train_epoch(model, train_loader, criterion, optimizer, device,
         hard_topk: Sample uniformly from the top-k most similar negatives
         margin: Triplet-loss margin
         loss_type: Loss type ('triplet' or 'infonce')
+        debug: Print per-batch hypergraph diagnostics for the first batch
     """
     model.train()
     total_loss = 0
@@ -361,8 +362,8 @@ def train_epoch(model, train_loader, criterion, optimizer, device,
             source_hypergraph = batch_H[:batch_size]  # [batch_size, num_relevant_edges]
             target_hypergraph = batch_H[batch_size:]  # [batch_size, num_relevant_edges]
 
-            # Debug: sanity-check the hypergraph (first batch only)
-            if not hypergraph_debug_printed:
+            # Debug: sanity-check the hypergraph (first batch only, --debug)
+            if debug and not hypergraph_debug_printed:
                 print(f"\n Hypergraph debug info (Batch 0):")
                 print(f"  Batch size: {batch_size}")
                 print(f"  Global hypergraph shape: {global_hypergraph.shape}")
@@ -604,6 +605,8 @@ def main():
     parser.add_argument('--dataset', type=str, required=True)
     parser.add_argument('--data_root', type=str, default='datasets/Lake',
                         help='Root directory containing <dataset>/ folders (default: datasets/Lake)')
+    parser.add_argument('--debug', action='store_true',
+                        help='Print per-batch hypergraph diagnostics')
     parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--lr', type=float, default=0.0001)
@@ -1079,7 +1082,8 @@ def main():
             hard_topk=args.hard_topk,
             margin=effective_margin,
             loss_type=args.loss_type,  # loss type
-            infonce_temperature=args.temperature
+            infonce_temperature=args.temperature,
+            debug=args.debug
         )
 
         _epoch_times.append(time.time() - _ep_start)

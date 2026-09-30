@@ -159,7 +159,7 @@ class GraphBuilderSearch:
             density = edge_count / (num_nodes * (num_nodes - 1) / 2) * 100 if num_nodes > 1 else 0
             print(f"   Density: {density:.4f}%")
             if skipped_count > 0:
-                print(f"   ️ Skipped pairs (not in target): {skipped_count}")
+                print(f"    Skipped pairs (not in target): {skipped_count}")
 
         # Cache if path provided
         if self.cache_path:

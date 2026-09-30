@@ -153,7 +153,7 @@ def main():
     # Device check
     device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
     if device.type == 'cpu' and args.device == 'cuda':
-        print('️ CUDA not available, using CPU')
+        print(' CUDA not available, using CPU')
 
     if not os.path.exists(args.model_path):
         raise FileNotFoundError(f"Model file not found: {args.model_path}")
@@ -273,7 +273,7 @@ def main():
         strict=False
     )
     if unexpected_keys:
-        print(f'️ Ignored unexpected keys: {len(unexpected_keys)}')
+        print(f' Ignored unexpected keys: {len(unexpected_keys)}')
     model.eval()
     print(' Enhanced model loaded successfully')
     print(f"   Enhanced features: Table PE | Column PE | Patch GNN | Mixer")

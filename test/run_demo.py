@@ -64,6 +64,8 @@ def run(cmd, **kwargs):
     print('\n' + '=' * 78)
     print('$ ' + ' '.join(cmd))
     print('=' * 78)
+    # Flush so these headers precede the subprocess output even when piped
+    sys.stdout.flush()
     proc = subprocess.run(cmd, cwd=REPO_ROOT, **kwargs)
     if proc.returncode != 0:
         sys.exit(f'Step failed (exit {proc.returncode}): {cmd[1]}')
@@ -121,6 +123,7 @@ def generate_training_data():
         '--datasets', 'DEMO',
         '--data_dir', str(TEST_DIR / 'tables'),
         '--output_dir', str(DATA_DIR / 'DEMO'),
+        '--display_samples', '3',
         '--use_llm', '1' if USE_LLM else '0',
         '--type', 'mat',
     ])
