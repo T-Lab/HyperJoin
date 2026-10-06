@@ -155,6 +155,8 @@ If you find this work useful, please cite:
   journal   = {Proceedings of the VLDB Endowment},
   volume    = {19},
   number    = {13},
+  pages     = {5066--5079},
+  doi       = {10.14778/3849398.3849405},
   year      = {2026},
   url       = {https://github.com/T-Lab/HyperJoin}
 }
