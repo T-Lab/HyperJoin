@@ -1,5 +1,14 @@
 # HyperJoin
-<img width="360" alt="HyperJoin offline training architecture" src="assets/offline.png" /> <img width="360" alt="HyperJoin online search architecture" src="assets/online.png" />
+<table>
+  <tr>
+    <td><img width="360" alt="HyperJoin offline training architecture" src="assets/offline.png" /></td>
+    <td><img width="360" alt="HyperJoin online search architecture" src="assets/online.png" /></td>
+  </tr>
+  <tr>
+    <td>The offline phase of HyperJoin, which constructs the hypergraph and learns column representations with HIN.</td>
+    <td>The online ranking phase of HyperJoin, which performs global coherent reranking over the candidate pool.</td>
+  </tr>
+</table>
 
 # HyperJoin: LLM-augmented Hypergraph Link Prediction for Joinable Table Discovery
 
