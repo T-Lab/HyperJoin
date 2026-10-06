@@ -1,52 +1,66 @@
-# HyperJoin
+# HyperJoin: LLM-augmented Hypergraph Link Prediction for Joinable Table Discovery
+
+**PVLDB 19(13), 2026** — Shiyuan Liu, Jianwei Wang, Xuemin Lin, Lu Qin, Wenjie Zhang, Ying Zhang
+
+[Full paper](full_version/VLDB_26_HyperJoin_Online_Full_version.pdf) · [DOI](https://doi.org/10.14778/3849398.3849405) · [Quick start](#quick-start) · [Code](#code-navigation) · [Citation](#citation)
+
+HyperJoin constructs a dual-type hypergraph from tables and their augmented columns, and learns column representations with a hierarchical interaction network (HIN). At query time it retrieves cosine-similarity candidates and reranks them with a maximum spanning tree for coherent result sets.
+
+This repository is the research artifact accompanying the paper; it provides the model, pipeline, and a self-contained demo rather than turnkey reproduction of the full benchmark.
+
 <table>
   <tr>
-    <td><img width="360" alt="HyperJoin offline training architecture" src="assets/offline.png" /></td>
-    <td><img width="360" alt="HyperJoin online search architecture" src="assets/online.png" /></td>
+    <td><img width="360" alt="HyperJoin offline phase" src="assets/offline.png" /></td>
+    <td><img width="360" alt="HyperJoin online phase" src="assets/online.png" /></td>
   </tr>
   <tr>
-    <td>The offline phase of HyperJoin, which constructs the hypergraph and learns column representations with HIN.</td>
-    <td>The online ranking phase of HyperJoin, which performs global coherent reranking over the candidate pool.</td>
+    <td><em>The offline phase of HyperJoin, which constructs the hypergraph and learns column representations with HIN.</em></td>
+    <td><em>The online ranking phase of HyperJoin, which performs global coherent reranking over the candidate pool.</em></td>
   </tr>
 </table>
 
-# HyperJoin: LLM-augmented Hypergraph Link Prediction for Joinable Table Discovery
+## Quick start
 
-## Description
-
-This repository provides the codebase for the paper "HyperJoin: LLM-augmented Hypergraph Link Prediction for Joinable Table Discovery".
-
-## Artifact Status
-
-This repository contains the main source code used for the HyperJoin paper: column-level hypergraph construction, the HIN model, label-free self-supervised training, MST reranking, and evaluation. It is provided as a research artifact; dataset preprocessing and full end-to-end reproduction require the benchmark files described below.
-
-## Quick Demo
-
-A self-contained smoke test ships in `test/`. It runs the full chain — data generation, training, MST-reranked search, evaluation — on five tiny sample tables:
+From the repository root:
 
 ```bash
+pip install -r requirements.txt
 python test/run_demo.py
 ```
 
-See `test/README.md` for what each file does and how to plug in your own tables or enable LLM perturbation.
+The demo runs the full chain — data generation, training (3 epochs on CPU), and MST-reranked search — on five bundled sample tables.
 
-## Dataset
+- Uses rule-based perturbation: no API access required.
+- Prints Precision/Recall/F1@K for K in {1, 5, 10, 15, 20, 25}.
+- Generated artifacts land in `test/data/` (datasets) and `results/demo/` (checkpoints, metrics, logs); both are git-ignored.
 
-We provide the dataset used in this project here: **[UK_SG](https://drive.google.com/drive/folders/1Ttb6nrt05J6VG2FdF6_jEKoU-zWpSyL2?usp=sharing)**.
+See [test/README.md](test/README.md) for what each file does. Dependencies are listed in [requirements.txt](requirements.txt); `openai` and `fasttext` are installed by it but only used on the optional LLM / FastText paths described below.
 
-The scripts expect the downloaded dataset under `datasets/Lake/<dataset>/`, including `target.npy`, `query.npy`, `target_metadata.pkl`, `query_metadata.pkl`, and either `self_supervised_pairs.pkl` or the corresponding joinable-pair CSV/index files. Pass `--data_root` to `train.py`/`search.py` or set `HYPERJOIN_DATA_ROOT` to use a different location.
+If the FastText model is absent, the demo falls back to deterministic embeddings — sufficient as a smoke test of the pipeline, but not indicative of paper performance.
 
-## 1. Generate Label-Free Training Pairs (Optional)
+## Using your own data
 
-`src/datagen.py` builds self-supervised joinable pairs by table splitting and column perturbation; `src/llm_augmentation.py` generates the LLM-augmented inter-table descriptions used for hyperedge construction. Skip this step if `self_supervised_pairs.pkl` already exists under `datasets/Lake/<dataset>/`.
+Download the evaluation dataset used in the paper here: **[UK_SG](https://drive.google.com/drive/folders/1Ttb6nrt05J6VG2FdF6_jEKoU-zWpSyL2?usp=sharing)**.
+
+The scripts expect datasets under `datasets/Lake/<dataset>/` by default; pass `--data_root` to `train.py`/`search.py` to use a different location. Two kinds of dataset directories are involved:
+
+- **Evaluation dataset** (e.g. `UK_SG`): `query.npy` / `target.npy` (column embeddings), `query_metadata.pkl` / `target_metadata.pkl` (display names), and `t=0.2/test/index.csv` (ground truth required for evaluation).
+- **Training dataset** (e.g. `UK_SG_LabelFree`): generated by `src/datagen.py`; contains `target.npy`, `target_metadata.pkl`, and `self_supervised_pairs.pkl` (the label-free training pairs).
+
+The `test/` folder contains the raw fixtures (`tables/*.csv`, `query.csv`, `target.csv`, `index.csv`, metadata JSON) that `test/run_demo.py` converts into this format — see [test/README.md](test/README.md) for the precise input layout.
+
+To generate label-free training pairs from your own raw tables:
 
 ```bash
-python src/datagen.py --datasets <name> --data_dir <raw_tables_dir> --use_llm 0
+python src/datagen.py --datasets UK_SG --data_dir path/to/raw_tables --use_llm 0
 ```
 
-Rule-based perturbation is used by default. Pass `--use_llm 1` and set `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL_ID` to enable LLM perturbation (see `src/llm_augmentation.py`).
+`--output_dir` sets the output base directory (default `datasets/Lake/<datasets>`); datagen appends a `_LabelFree` suffix, so the above writes `datasets/Lake/UK_SG_LabelFree/`, which is the name you pass to `--dataset` when training. The example explicitly selects rule-based perturbation with `--use_llm 0` — datagen requires this flag to be set one way or the other. Pass `--use_llm 1` and set `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL_ID` to enable LLM perturbation (see [test/README.md](test/README.md) and `src/llm_augmentation.py`).
 
-## 2. Train the Model
+The paper configuration is a triplet loss with margin 1.0, learning rate 4e-4, batch size 64, and 30 epochs; `--edge_mask_ratio 0.2` splits the augmented positive pairs 80% support / 20% prediction.
+
+<details>
+<summary>Training and search commands</summary>
 
 ```bash
 python src/hypergraph/train.py \
@@ -68,9 +82,7 @@ python src/hypergraph/train.py \
     --output_dir ./results/UK_SG
 ```
 
-## 3. Search for Joinable Columns
-
-After training, run the search pipeline to discover joinable columns:
+The best checkpoint is saved to `<output_dir>/<dataset>/best_model.pth`. Search and evaluation:
 
 ```bash
 python src/hypergraph/search.py \
@@ -86,72 +98,22 @@ python src/hypergraph/search.py \
     --seed 42
 ```
 
-The search module outputs evaluation metrics including Precision@K, Recall@K, and F1@K, plus per-query logs under `results/`.
+</details>
 
-## Key Components
+Search outputs (evaluation metrics, per-query logs) are written to `results/column_hypergraph_mst/` by default; set `EXPERIMENT_DIR` to override. The demo uses `results/demo/`.
 
-**Hypergraph Construction:**
-- Intra-table hyperedges: Connect columns within the same table
-- Inter-table hyperedges: Connect joinable columns across tables using LLM-augmented data generation
-- Formulates joinable table discovery as link prediction on the constructed hypergraph
+## Code navigation
 
-**Hierarchical Interaction Network (HIN):**
-- Text and content encoders for column representation
-- Three-level positional encoding (Table PE + Column PE)
-- Patch GNN encoder: Local message passing for intra-hyperedge aggregation
-- Hypergraph-aware Mixer: Global message passing for inter-hyperedge interaction
-
-**Label-Free Self-Supervised Learning:**
-- Table splitting and column perturbation for automatic training data generation
-- Triplet loss with hard negative mining
-- No manual annotations required
-
-**Coherence-Aware Reranking:**
-- Maximum Spanning Tree (MST) algorithm for pruning noisy connections
-- Balances query-candidate relevance and inter-candidate coherence
-- Produces internally consistent result sets
-
-## Project Structure
-
-```
-HyperJoin/
-├── src/
-│   ├── hypergraph/                            # Core model & pipeline
-│   │   ├── construction.py                    # Hypergraph construction, batching, losses
-│   │   ├── model.py                           # EnhancedHyperJoinModel (HIN)
-│   │   ├── layers.py                          # Positional encoding & mixer layers
-│   │   ├── intra_edge_gnn.py                  # Intra-hyperedge GNN encoder
-│   │   ├── train.py                           # Label-free self-supervised training
-│   │   └── search.py                          # Search + MST reranking
-│   ├── mst_reranker/                          # Coherence-aware reranking
-│   │   ├── mst.py                             # Greedy label-free MST reranker
-│   │   ├── explicit_maxst.py                  # Explicit MaxST variant
-│   │   ├── graph_builder.py                   # Joinability graph builder
-│   │   └── coherence_eval.py                  # Coherence metrics
-│   ├── datagen.py                             # Label-free pair generation
-│   ├── llm_augmentation.py                    # LLM-augmented inter-table hyperedges
-│   ├── perturbation_cache.py                  # Column perturbation cache
-│   ├── data.py                                # Dataset classes
-│   ├── evaluator.py                           # Precision/Recall/F1 evaluation
-│   └── utils.py                               # Utility functions
-├── test/                                      # Self-contained demo (see test/README.md)
-├── full_version/                              # Online full paper with appendix
-└── datasets/Lake/                             # Expected dataset root (not included)
-```
-
-## Requirements
-
-- Python 3.8+
-- PyTorch 2.0+
-- numpy, pandas, scipy, tqdm
-- `openai` (optional, only for `llm_augmentation.py`)
-- `fasttext` (optional, only for `datagen.py`; falls back to deterministic embeddings without it)
-- `scikit-learn` + `matplotlib` (optional, only for the embedding-visualisation helper)
-
-Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+| Path | Contents |
+|---|---|
+| [datagen.py](src/datagen.py), [llm_augmentation.py](src/llm_augmentation.py) | Label-free pair generation; LLM-augmented inter-table hyperedges |
+| [construction.py](src/hypergraph/construction.py) | Hypergraph construction, batching, losses |
+| [model.py](src/hypergraph/model.py), [layers.py](src/hypergraph/layers.py), [intra_edge_gnn.py](src/hypergraph/intra_edge_gnn.py) | HIN model: positional encodings, intra-hyperedge GNN, hypergraph-aware mixer |
+| [train.py](src/hypergraph/train.py), [search.py](src/hypergraph/search.py) | Self-supervised training; search + MST reranking |
+| [mst_reranker/](src/mst_reranker/) | Coherence-aware reranking (greedy MST, explicit MaxST, coherence metrics) |
+| [evaluator.py](src/evaluator.py), [data.py](src/data.py), [utils.py](src/utils.py) | Precision/Recall/F1 evaluation, dataset classes, utilities |
+| [test/](test/) | Self-contained demo (see [test/README.md](test/README.md)) |
+| [full_version/](full_version/) | Online full paper with appendix |
 
 ## Citation
 
@@ -170,4 +132,3 @@ If you find this work useful, please cite:
   url       = {https://github.com/T-Lab/HyperJoin}
 }
 ```
-
