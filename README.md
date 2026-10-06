@@ -1,5 +1,6 @@
 # HyperJoin
-<img width="1107" height="622" alt="image" src="https://github.com/user-attachments/assets/bff044c9-112e-4a01-b9d9-1e3109469309" />
+<img width="1107" alt="HyperJoin offline training architecture" src="assets/offline.png" />
+<img width="1107" alt="HyperJoin online search architecture" src="assets/online.png" />
 
 # HyperJoin: LLM-augmented Hypergraph Link Prediction for Joinable Table Discovery
 
