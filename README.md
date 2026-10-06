@@ -1,6 +1,5 @@
 # HyperJoin
-<img width="1107" alt="HyperJoin offline training architecture" src="assets/offline.png" />
-<img width="1107" alt="HyperJoin online search architecture" src="assets/online.png" />
+<img width="360" alt="HyperJoin offline training architecture" src="assets/offline.png" /> <img width="360" alt="HyperJoin online search architecture" src="assets/online.png" />
 
 # HyperJoin: LLM-augmented Hypergraph Link Prediction for Joinable Table Discovery
 
